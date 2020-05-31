@@ -28,7 +28,7 @@ module Oink
     end
 
     def log_routing(env)
-      routing_info = rails3_routing_info(env) || rails2_routing_info(env)
+      routing_info = rails3_routing_info(env) || rails2_routing_info(env) || padrino_routing_info(env)
       if routing_info
         controller = routing_info['controller']
         action     = routing_info['action']
@@ -60,6 +60,11 @@ module Oink
 
     def rails2_routing_info(env)
       env['action_controller.request.path_parameters']
+    end
+
+    def padrino_routing_info(env)
+      path = env['REQUEST_PATH']
+      {'controller' => path.split('/')[1], 'action' => path.split('/')[2]}
     end
 
     def reset_objects_instantiated
