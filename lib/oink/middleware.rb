@@ -16,10 +16,15 @@ module Oink
     def call(env)
       status, headers, body = @app.call(env)
 
-      log_routing(env)
-      log_memory
-      log_activerecord
-      log_completed
+      # filter ping requests
+      routing_info = rails3_routing_info(env) || rails2_routing_info(env) || padrino_routing_info(env)
+      controller = routing_info['controller']
+      if controller != 'ping'
+        log_routing(env)
+        log_memory
+        log_activerecord
+        log_completed
+      end
       [status, headers, body]
     end
 
